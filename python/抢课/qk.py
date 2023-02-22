@@ -25,7 +25,7 @@ session.cookies = cookielib.LWPCookieJar(filename='cookies')
 try:
     session.cookies.load(ignore_discard=True) # 如果已经有 cookie信息的话 直接用于登录
 except:
-    print("[-] Cookie 未能加载")
+    print("[-] Cookie 未能加载, 使用密码登录")
     
 
 #userid = input("userid:\n")
@@ -60,11 +60,11 @@ def qg_dsds(userid,password):   # Encrypt the user name and password
 def get_captcha():
     captcha_url = 'http://172.18.2.43/jwweb/sys/ValidateCode.aspx'
     r = session.get(captcha_url, headers=headers)
+    print("[+] 记下验证码之后关闭图片")
     with open('captcha.jpg', 'wb') as f:
         f.write(r.content)
         f.close()
     im = Image.open('captcha.jpg')
-    print("[+] 请关闭图片")
     im.show()
     im.close()
     
@@ -87,5 +87,10 @@ postdata = {
 #def login():
 post_url ='http://172.18.2.43/jwweb/_data/login_new.aspx'
 login_page = session.post(post_url, data=postdata, headers=headers)
+print(login_page.text)
+if '网上选课' in login_page.text:
+    print("success")
+else:
+    print("failed")
 session.cookies.save()
 print("cookie 已保存")
